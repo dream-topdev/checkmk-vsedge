@@ -33,7 +33,7 @@ from cmk.gui.plugins.wato import (
 )
 
 
-def _parameter_valuespec_phion_vpnusers():
+def _parameter_valuespec_vsedge():
     return Dictionary(elements=[
         (
             'users',
@@ -66,7 +66,7 @@ rulespec_registry.register(
     CheckParameterRulespecWithoutItem(
         check_group_name='vsedge',
         group=RulespecGroupCheckParametersApplications,
-        parameter_valuespec=_parameter_valuespec_phion_vpnusers,
+        parameter_valuespec=_parameter_valuespec_vsedge,
         title=lambda: _('Phion/Barracuda VPN Users'),
     )
 )
