@@ -38,7 +38,7 @@ def _parameter_valuespec_vsedge():
         (
             'users',
             Alternative(
-                title=_('Levels for number of Phion VPN Users'),
+                title=_('VSEdge Users'),
                 elements=[
                     FixedValue(
                         None,
@@ -67,6 +67,6 @@ rulespec_registry.register(
         check_group_name='vsedge',
         group=RulespecGroupCheckParametersApplications,
         parameter_valuespec=_parameter_valuespec_vsedge,
-        title=lambda: _('Phion/Barracuda VPN Users'),
+        title=lambda: _('VSEdge Users'),
     )
 )

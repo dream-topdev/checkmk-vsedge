@@ -21,21 +21,21 @@ from cmk.gui.i18n import _
 
 from cmk.gui.plugins.metrics import metric_info, check_metrics, perfometer_info, MB
 
-metric_info["phion_vpnusers"] = {
-    "title": _("Concurrent VPN Users"),
+metric_info["vsedge"] = {
+    "title": _("VSEdge Users"),
     "unit": "count",
     "color": "#1DB1FF",
 }
 
-check_metrics["check_mk-phion_vpnusers"] = {
+check_metrics["check_mk-vsedge"] = {
     "users": {
-        "name": "phion_vpnusers",
+        "name": "vsedge",
     },
 }
 
 perfometer_info.append({
     "type": "logarithmic",
-    "metric": "phion_vpnusers",
+    "metric": "vsedge",
     "half_value": 10,
     "exponent": 2,
 })
