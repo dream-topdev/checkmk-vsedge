@@ -39,3 +39,50 @@ perfometer_info.append({
     "half_value": 10,
     "exponent": 2,
 })
+
+# metrics for traffic
+metric_info["vsedge_traffic_currentTx"] = {
+    "title": _("Current TX rate"),
+    "unit": "bytes/s",
+    "color": "#1DB1FF",
+}
+
+metric_info["vsedge_traffic_currentRx"] = {
+    "title": _("Current RX rate"),
+    "unit": "bytes/s",
+    "color": "#0088CE",
+}
+
+metric_info["vsedge_traffic_totalTx"] = {
+    "title": _("Total transmited"),
+    "unit": "bytes",
+    "color": "#00e060",
+}
+
+metric_info["vsedge_traffic_totalRx"] = {
+    "title": _("Total received"),
+    "unit": "bytes",
+    "color": "#00e060",
+}
+
+check_metrics["check_mk-vsedge_traffic"] = {
+    "currentTx": {
+        "name": "vsedge_traffic_currentTx",
+    },
+    "currentRx": {
+        "name": "vsedge_traffic_currentRx",
+    },
+    "totalTx": {
+        "name": "vsedge_traffic_totalTx",
+    },
+    "totalRx": {
+        "name": "vsedge_traffic_totalRx",
+    },
+}
+
+perfometer_info.append({
+    "type": "logarithmic",
+    "metric": "vsedge_traffic",
+    "half_value": 10,
+    "exponent": 2,
+})
