@@ -86,3 +86,32 @@ perfometer_info.append({
     "half_value": 10,
     "exponent": 2,
 })
+
+# metrics for resource
+metric_info["vsedge_resource_cpuUsed"] = {
+    "title": _("Current CPU Usage"),
+    "unit": "%",
+    "color": "#1DB1FF",
+}
+
+metric_info["vsedge_resource_memoryUsed"] = {
+    "title": _("Current Memory Usage"),
+    "unit": "%",
+    "color": "#0088CE",
+}
+
+check_metrics["check_mk-vsedge_traffic"] = {
+    "cpuUsed": {
+        "name": "vsedge_resource_cpuUsed",
+    },
+    "memoryUsed": {
+        "name": "vsedge_resource_memoryUsed",
+    }
+}
+
+perfometer_info.append({
+    "type": "logarithmic",
+    "metric": "vsedge_resource",
+    "half_value": 10,
+    "exponent": 2,
+})
