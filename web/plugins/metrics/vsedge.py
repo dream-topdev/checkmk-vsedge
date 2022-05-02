@@ -81,10 +81,9 @@ check_metrics["check_mk-vsedge_traffic"] = {
 }
 
 perfometer_info.append({
-    "type": "logarithmic",
-    "metric": "vsedge_traffic",
-    "half_value": 10,
-    "exponent": 2,
+    "type": "linear",
+    "segments": ["vsedge_traffic_currentTx", "vsedge_traffic_currentRx", "vsedge_traffic_totalTx", "vsedge_traffic_totalRx"],
+    "total": 1000.0,
 })
 
 # metrics for resource
@@ -110,8 +109,7 @@ check_metrics["check_mk-vsedge_traffic"] = {
 }
 
 perfometer_info.append({
-    "type": "logarithmic",
-    "metric": "vsedge_resource",
-    "half_value": 10,
-    "exponent": 2,
+    "type": "linear",
+    "segments": ["vsedge_resource_cpuUsed", "vsedge_resource_memoryUsed"],
+    "total": 1000.0,
 })

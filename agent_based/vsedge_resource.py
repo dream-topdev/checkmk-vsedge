@@ -66,7 +66,7 @@ def check_vsedge_resource(params, section):
         int(section['cpuUsed']),
         levels_upper=params.get('cpuUsed', None),
         label='Current cpu usage',
-        metric_name='cpuUsed',
+        metric_name='vsedge_resource_cpuUsed',
         render_func=lambda v: "%d" % v
     )
 
@@ -74,7 +74,7 @@ def check_vsedge_resource(params, section):
         int(section['cpuUsed']),
         levels_upper=params.get('memoryUsed', None),
         label='Current memory usage',
-        metric_name='memoryUsed',
+        metric_name='vsedge_resource_memoryUsed',
         render_func=lambda v: "%d" % v
     )
 

@@ -72,7 +72,7 @@ def check_vsedge_traffic(params, section):
         int(section['currentTx']),
         levels_upper=params.get('currentTx', None),
         label='Current TX rate',
-        metric_name='currentTx',
+        metric_name='vsedge_traffic_currentTx',
         render_func=lambda v: "%d" % v
     )
 
@@ -80,7 +80,7 @@ def check_vsedge_traffic(params, section):
         int(section['currentTx']),
         levels_upper=params.get('currentRx', None),
         label='Current RX rate',
-        metric_name='currentRx',
+        metric_name='vsedge_traffic_currentRx',
         render_func=lambda v: "%d" % v
     )
 
@@ -88,7 +88,7 @@ def check_vsedge_traffic(params, section):
         int(section['currentTx']),
         levels_upper=params.get('totalTx', None),
         label='Total transmited',
-        metric_name='totalTx',
+        metric_name='vsedge_traffic_totalTx',
         render_func=lambda v: "%d" % v
     )
 
@@ -96,7 +96,7 @@ def check_vsedge_traffic(params, section):
         int(section['currentTx']),
         levels_upper=params.get('totalRx', None),
         label='Total received',
-        metric_name='totalRx',
+        metric_name='vsedge_traffic_totalRx',
         render_func=lambda v: "%d" % v
     )
 
