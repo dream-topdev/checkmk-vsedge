@@ -20,10 +20,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # Example device summary from SNMP data:
-# .1.3.6.1.2.1.1.7.0 --> CF-PRIVATE::currentTx
-# .1.3.6.1.2.1.1.7.1 --> CF-PRIVATE::currentRx
-# .1.3.6.1.2.1.1.7.2 --> CF-PRIVATE::totalTx
-# .1.3.6.1.2.1.1.7.3 --> CF-PRIVATE::totalRx
+# .1.3.6.1.4.1.65535.1.3.1.0 --> CF-PRIVATE::currentTx
+# .1.3.6.1.4.1.65535.1.3.2.0 --> CF-PRIVATE::currentRx
+# .1.3.6.1.4.1.65535.1.3.3.0 --> CF-PRIVATE::totalTx
+# .1.3.6.1.4.1.65535.1.3.4.0 --> CF-PRIVATE::totalRx
 
 from cmk.gui.i18n import _
 from cmk.base.plugins.agent_based.agent_based_api.v1 import (
@@ -35,6 +35,7 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
     startswith,
     Result,
     State,
+    render
 )
 
 
@@ -50,12 +51,12 @@ register.snmp_section(
     name='vsedge_traffic',
     detect = startswith(".1.3.6.1.2.1.1.1.0", "Linux vsedge"),
     fetch=SNMPTree(
-        base='.1.3.6.1.2.1.1.7',
+        base='.1.3.6.1.4.1.65535.1.3',
         oids=[
-            '0',  #currentTx
-            '1',  #currentRx
-            '2',  #totalTx
-            '3',  #totalRx
+            '1.0',  #currentTx
+            '2.0',  #currentRx
+            '3.0',  #totalTx
+            '4.0',  #totalRx
         ],
     ),    
     parse_function=parse_vsedge_traffic,
@@ -73,31 +74,31 @@ def check_vsedge_traffic(params, section):
         levels_upper=params.get('currentTx', None),
         label='Current TX rate',
         metric_name='vsedge_traffic_currentTx',
-        render_func=lambda v: "%d" % v
+        render_func=lambda v: render.iobandwidth(v)
     )
 
     yield from check_levels(
-        int(section['currentTx']),
+        int(section['currentRx']),
         levels_upper=params.get('currentRx', None),
         label='Current RX rate',
         metric_name='vsedge_traffic_currentRx',
-        render_func=lambda v: "%d" % v
+        render_func=lambda v: render.iobandwidth(v)
     )
 
     yield from check_levels(
-        int(section['currentTx']),
+        int(section['totalTx']),
         levels_upper=params.get('totalTx', None),
         label='Total transmited',
         metric_name='vsedge_traffic_totalTx',
-        render_func=lambda v: "%d" % v
+        render_func=lambda v: render.bytes(v)
     )
 
     yield from check_levels(
-        int(section['currentTx']),
+        int(section['totalRx']),
         levels_upper=params.get('totalRx', None),
         label='Total received',
         metric_name='vsedge_traffic_totalRx',
-        render_func=lambda v: "%d" % v
+        render_func=lambda v: render.bytes(v)
     )
 
 

@@ -20,8 +20,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # Example device summary from SNMP data:
-# .1.3.6.1.2.1.1.7.0 --> CF-PRIVATE::cpuUsed
-# .1.3.6.1.2.1.1.7.1 --> CF-PRIVATE::memoryUsed
+# .1.3.6.1.4.1.65535.1.4.1.0 --> CF-PRIVATE::cpuUsed
+# .1.3.6.1.4.1.65535.1.4.2.0 --> CF-PRIVATE::memoryUsed
 
 from cmk.gui.i18n import _
 from cmk.base.plugins.agent_based.agent_based_api.v1 import (
@@ -33,6 +33,7 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
     startswith,
     Result,
     State,
+    render
 )
 
 
@@ -46,10 +47,10 @@ register.snmp_section(
     name='vsedge_resource',
     detect = startswith(".1.3.6.1.2.1.1.1.0", "Linux vsedge"),
     fetch=SNMPTree(
-        base='.1.3.6.1.2.1.1.7',
+        base='.1.3.6.1.4.1.65535.1.4',
         oids=[
-            '0',  #cpuUsed
-            '1',  #memoryUsed
+            '1.0',  #cpuUsed
+            '2.0',  #memoryUsed
         ],
     ),    
     parse_function=parse_vsedge_resource,
@@ -67,15 +68,15 @@ def check_vsedge_resource(params, section):
         levels_upper=params.get('cpuUsed', None),
         label='Current cpu usage',
         metric_name='vsedge_resource_cpuUsed',
-        render_func=lambda v: "%d" % v
+        render_func=lambda v: render.percent(v)
     )
 
     yield from check_levels(
-        int(section['cpuUsed']),
+        int(section['memoryUsed']),
         levels_upper=params.get('memoryUsed', None),
         label='Current memory usage',
         metric_name='vsedge_resource_memoryUsed',
-        render_func=lambda v: "%d" % v
+        render_func=lambda v: render.percent(v)
     )
 
 

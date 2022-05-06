@@ -20,11 +20,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # Example device summary from SNMP data:
-# .1.3.6.1.2.1.1.7.0 --> CF-PRIVATE::deviceIp
-# .1.3.6.1.2.1.1.7.1 --> CF-PRIVATE::productName
-# .1.3.6.1.2.1.1.7.2 --> CF-PRIVATE::deviceUptime
-# .1.3.6.1.2.1.1.7.3 --> CF-PRIVATE::serialNo
-# .1.3.6.1.2.1.1.7.4 --> CF-PRIVATE::firmwareVersion
+# .1.3.6.1.4.1.65535.1.1.1.0 --> CF-PRIVATE::deviceIp
+# .1.3.6.1.4.1.65535.1.1.2.0 --> CF-PRIVATE::productName
+# .1.3.6.1.4.1.65535.1.1.3.0 --> CF-PRIVATE::deviceUptime
+# .1.3.6.1.4.1.65535.1.1.4.0 --> CF-PRIVATE::serialNo
+# .1.3.6.1.4.1.65535.1.1.5.0 --> CF-PRIVATE::firmwareVersion
 
 from cmk.gui.i18n import _
 from cmk.base.plugins.agent_based.agent_based_api.v1 import (
@@ -36,6 +36,7 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
     startswith,
     Result,
     State,
+    render
 )
 
 
@@ -52,13 +53,13 @@ register.snmp_section(
     name='vsedge_summary',
     detect = startswith(".1.3.6.1.2.1.1.1.0", "Linux vsedge"),
     fetch=SNMPTree(
-        base='.1.3.6.1.2.1.1.7',
+        base='.1.3.6.1.4.1.65535.1.1',
         oids=[
-            '0',  #deviceIP
-            '1',  #productName
-            '2',  #deviceUptime
-            '3',  #serialNo
-            '4',  #firmwareVersion
+            '1.0',  #deviceIP
+            '2.0',  #productName
+            '3.0',  #deviceUptime
+            '4.0',  #serialNo
+            '5.0',  #firmwareVersion
         ],
     ),    
     parse_function=parse_vsedge_summary,
@@ -71,7 +72,7 @@ def discovery_vsedge_summary(section):
 
 
 def check_vsedge_summary(params, section):
-    summary = 'Device IP is %s. Product Name is %s. Device Up Time is %s. Serial No is %s. Firmware version is %s.' % (section['deviceIP'], section['productName'], section['deviceUptime'], section['serialNo'], section['firmwareVersion'])
+    summary = 'Device IP is %s. Product Name is %s. Device Up Time is %s. Serial No is %s. Firmware version is %s.' % (section['deviceIP'], section['productName'], render.timespan(section['deviceUptime']), section['serialNo'], section['firmwareVersion'])
     yield Result(state=State.OK, summary=summary)
 
 

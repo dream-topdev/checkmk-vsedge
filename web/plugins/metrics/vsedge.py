@@ -21,25 +21,6 @@ from cmk.gui.i18n import _
 
 from cmk.gui.plugins.metrics import metric_info, check_metrics, perfometer_info, MB
 
-metric_info["vsedge"] = {
-    "title": _("VSEdge Users"),
-    "unit": "count",
-    "color": "#1DB1FF",
-}
-
-check_metrics["check_mk-vsedge"] = {
-    "users": {
-        "name": "vsedge",
-    },
-}
-
-perfometer_info.append({
-    "type": "logarithmic",
-    "metric": "vsedge",
-    "half_value": 10,
-    "exponent": 2,
-})
-
 # metrics for traffic
 metric_info["vsedge_traffic_currentTx"] = {
     "title": _("Current TX rate"),
@@ -50,7 +31,7 @@ metric_info["vsedge_traffic_currentTx"] = {
 metric_info["vsedge_traffic_currentRx"] = {
     "title": _("Current RX rate"),
     "unit": "bytes/s",
-    "color": "#0088CE",
+    "color": "#1DB1FF",
 }
 
 metric_info["vsedge_traffic_totalTx"] = {
@@ -81,9 +62,10 @@ check_metrics["check_mk-vsedge_traffic"] = {
 }
 
 perfometer_info.append({
-    "type": "linear",
-    "segments": ["vsedge_traffic_currentTx", "vsedge_traffic_currentRx", "vsedge_traffic_totalTx", "vsedge_traffic_totalRx"],
-    "total": 1000.0,
+    "type": "logarithmic",
+    "metric": "vsedge_traffic_currentTx",
+    "half_value": 10,
+    "exponent": 2.0,
 })
 
 # metrics for resource
@@ -96,7 +78,7 @@ metric_info["vsedge_resource_cpuUsed"] = {
 metric_info["vsedge_resource_memoryUsed"] = {
     "title": _("Current Memory Usage"),
     "unit": "%",
-    "color": "#0088CE",
+    "color": "#1DB1FF",
 }
 
 check_metrics["check_mk-vsedge_traffic"] = {
@@ -110,6 +92,6 @@ check_metrics["check_mk-vsedge_traffic"] = {
 
 perfometer_info.append({
     "type": "linear",
-    "segments": ["vsedge_resource_cpuUsed", "vsedge_resource_memoryUsed"],
-    "total": 1000.0,
+    "segments": ["vsedge_resource_cpuUsed"],
+    "total": 100.0,
 })

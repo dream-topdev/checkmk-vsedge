@@ -20,11 +20,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # Example device summary from SNMP data:
-# .1.3.6.1.2.1.1.7.0 --> CF-PRIVATE::deviceIp
-# .1.3.6.1.2.1.1.7.1 --> CF-PRIVATE::productName
-# .1.3.6.1.2.1.1.7.2 --> CF-PRIVATE::deviceUptime
-# .1.3.6.1.2.1.1.7.3 --> CF-PRIVATE::serialNo
-# .1.3.6.1.2.1.1.7.4 --> CF-PRIVATE::firmwareVersion
+# .1.3.6.1.4.1.65535.1.2.1.0 --> CF-PRIVATE::wirelessMode
+# .1.3.6.1.4.1.65535.1.2.2.0 --> CF-PRIVATE::wirelessFrequency
+# .1.3.6.1.4.1.65535.1.2.3.0 --> CF-PRIVATE::wirelessWidth
+# .1.3.6.1.4.1.65535.1.2.4.0 --> CF-PRIVATE::wirelessSignal
+# .1.3.6.1.4.1.65535.1.2.5.0 --> CF-PRIVATE::wirelessSsid
 
 from cmk.gui.i18n import _
 from cmk.base.plugins.agent_based.agent_based_api.v1 import (
@@ -36,6 +36,7 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
     startswith,
     Result,
     State,
+    render
 )
 
 
@@ -52,13 +53,13 @@ register.snmp_section(
     name='vsedge_wireless',
     detect = startswith(".1.3.6.1.2.1.1.1.0", "Linux vsedge"),
     fetch=SNMPTree(
-        base='.1.3.6.1.2.1.1.7',
+        base='.1.3.6.1.4.1.65535.1.2',
         oids=[
-            '0',  #wirelessMode
-            '1',  #wirelessFrequency
-            '2',  #wirelessWidth
-            '3',  #wirelessSignal
-            '4',  #wirelessSsid
+            '1.0',  #wirelessMode
+            '2.0',  #wirelessFrequency
+            '3.0',  #wirelessWidth
+            '4.0',  #wirelessSignal
+            '5.0',  #wirelessSsid
         ],
     ),    
     parse_function=parse_vsedge_wireless,
@@ -71,7 +72,7 @@ def discovery_vsedge_wireless(section):
 
 
 def check_vsedge_wireless(params, section):
-    summary = 'Wireless operation mode is %s. Wireless frequency is %s. Wireless channel width is %s. Wireless signal level is %s. Wireless network ID is %s.' % (section['wirelessMode'], section['wirelessFrequency'], section['wirelessWidth'], section['wirelessSignal'], section['wirelessSsid'])
+    summary = 'Wireless operation mode is %s. Wireless frequency is %s. Wireless channel width is %s. Wireless signal level is %s. Wireless network ID is %s.' % (section['wirelessMode'], render.frequency(section['wirelessFrequency']), render.frequency(section['wirelessWidth']), section['wirelessSignal'], section['wirelessSsid'])
     yield Result(state=State.OK, summary=summary)
 
 
