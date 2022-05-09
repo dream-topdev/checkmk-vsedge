@@ -41,6 +41,10 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
 
 
 def parse_vsedge_wireless(string_table):
+    if len(string_table) == 0:
+        return {
+            'wirelessMode': 'none'
+        }
     return {
         'wirelessMode': string_table[0][0],
         'wirelessFrequency': string_table[0][1],
@@ -72,8 +76,11 @@ def discovery_vsedge_wireless(section):
 
 
 def check_vsedge_wireless(params, section):
-    summary = 'Wireless operation mode is %s. Wireless frequency is %s. Wireless channel width is %s. Wireless signal level is %s. Wireless network ID is %s.' % (section['wirelessMode'], render.frequency(section['wirelessFrequency']), render.frequency(section['wirelessWidth']), section['wirelessSignal'], section['wirelessSsid'])
-    yield Result(state=State.OK, summary=summary)
+    if section.get('wirelessMode') == 'none':
+        yield Result(state=State.OK, summary="Wireless module is not working now.")
+    else:
+        summary = 'Wireless operation mode is %s. Wireless frequency is %s. Wireless channel width is %s. Wireless signal level is %s. Wireless network ID is %s.' % (section['wirelessMode'], render.frequency(section['wirelessFrequency']), render.frequency(section['wirelessWidth']), section['wirelessSignal'], section['wirelessSsid'])
+        yield Result(state=State.OK, summary=summary)
 
 
 register.check_plugin(
