@@ -95,3 +95,23 @@ perfometer_info.append({
     "segments": ["vsedge_resource_cpuUsed"],
     "total": 100.0,
 })
+
+
+# metrics for wireless
+metric_info["vsedge_wireless_wirelessSignal"] = {
+    "title": _("Wireless signal level"),
+    "unit": "dbm",
+    "color": "#1DB1FF",
+}
+
+check_metrics["check_mk-vsedge_wireless"] = {
+    "wirelessSignal": {
+        "name": "vsedge_wireless_wirelessSignal",
+    }
+}
+
+perfometer_info.append({
+    "type": "linear",
+    "segments": ["vsedge_wireless_wirelessSignal"],
+    "total": 100.0,
+})

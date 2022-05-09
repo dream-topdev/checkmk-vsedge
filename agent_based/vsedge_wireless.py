@@ -78,8 +78,15 @@ def discovery_vsedge_wireless(section):
 def check_vsedge_wireless(params, section):
     if section.get('wirelessMode') == 'none':
         yield Result(state=State.WARN, summary="Wireless link is not connected currently...")
-    else:
-        summary = 'Wireless operation mode is %s. Wireless frequency is %s. Wireless channel width is %s. Wireless signal level is %s. Wireless network ID is %s.' % (section['wirelessMode'], render.frequency(section['wirelessFrequency']), render.frequency(section['wirelessWidth']), section['wirelessSignal'], section['wirelessSsid'])
+    else:        
+        yield from check_levels(
+            int(section['wirelessSignal']),
+            levels_upper=params.get('wirelessSignal', None),
+            label='Wireless signal level',
+            metric_name='vsedge_wireless_wirelessSignal',
+            render_func=lambda v: "%d" % v
+        )
+        summary = 'Wireless operation mode is %s. Wireless frequency is %s MHz. Wireless channel width is %s MHz. Wireless signal level is %s dBm. Wireless network ID is %s.' % (section['wirelessMode'], section['wirelessFrequency'], section['wirelessWidth'], section['wirelessSignal'], section['wirelessSsid'])
         yield Result(state=State.OK, summary=summary)
 
 
