@@ -1,0 +1,35 @@
+{
+    'author': 'DevWithReact',
+    'description': 'This package is for management extension of vsedge devices',
+    'download_url': 'https://github.com/DevWithReact/checkmk-vsedge',
+    'files': {
+        'agent_based': [
+            'vsedge_resource.py',
+            'vsedge_summary.py',
+            'vsedge_traffic.py',
+            'vsedge_wireless.py'
+        ],
+        'agents': [],
+        'alert_handlers': [],
+        'bin': [],
+        'checkman': [],
+        'checks': [],
+        'doc': [],
+        'inventory': [],
+        'lib': [],
+        'locales': [],
+        'mibs': [],
+        'notifications': [],
+        'pnp-templates': [],
+        'web': [
+            'plugins/metrics/vsedge.py',
+            'plugins/wato/check_parameters_vsedge.py'
+        ]
+    },
+    'name': 'vsedge',
+    'title': 'SNMP management extension for vsedge',
+    'version': '1.0',
+    'version.min_required': '2.0.0p23',
+    'version.packaged': '2.0.0p23',
+    'version.usable_until': None
+}
