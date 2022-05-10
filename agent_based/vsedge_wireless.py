@@ -84,9 +84,9 @@ def check_vsedge_wireless(params, section):
             levels_upper=params.get('wirelessSignal', None),
             label='Wireless signal level',
             metric_name='vsedge_wireless_wirelessSignal',
-            render_func=lambda v: "%d" % v
+            render_func=lambda v: "%d dBm" % v
         )
-        summary = 'Wireless operation mode is %s. Wireless frequency is %s MHz. Wireless channel width is %s MHz. Wireless signal level is %s dBm. Wireless network ID is %s.' % (section['wirelessMode'], section['wirelessFrequency'], section['wirelessWidth'], section['wirelessSignal'], section['wirelessSsid'])
+        summary = 'Wireless operation mode is %s. Wireless frequency is %s MHz. Wireless channel width is %s MHz. Wireless network ID is %s.' % (section['wirelessMode'], section['wirelessFrequency'], section['wirelessWidth'], section['wirelessSsid'])
         yield Result(state=State.OK, summary=summary)
 
 
