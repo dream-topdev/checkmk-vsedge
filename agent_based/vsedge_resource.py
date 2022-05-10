@@ -82,7 +82,7 @@ def check_vsedge_resource(params, section):
 
 register.check_plugin(
     name='vsedge_resource',
-    service_name='VSEDGE Resource',
+    service_name='J-P Resource',
     discovery_function=discovery_vsedge_resource,
     check_function=check_vsedge_resource,
     check_ruleset_name='vsedge',

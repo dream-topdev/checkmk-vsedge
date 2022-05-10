@@ -38,7 +38,7 @@ def _parameter_valuespec_vsedge():
         (
             'users',
             Alternative(
-                title=_('VSEdge Users'),
+                title=_('J-P Users'),
                 elements=[
                     FixedValue(
                         None,
@@ -67,6 +67,6 @@ rulespec_registry.register(
         check_group_name='vsedge',
         group=RulespecGroupCheckParametersApplications,
         parameter_valuespec=_parameter_valuespec_vsedge,
-        title=lambda: _('VSEdge Users'),
+        title=lambda: _('J-P Users'),
     )
 )

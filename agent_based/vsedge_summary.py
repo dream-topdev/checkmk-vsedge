@@ -85,7 +85,7 @@ def check_vsedge_summary(params, section):
 
 register.check_plugin(
     name='vsedge_summary',
-    service_name='VSEDGE Summary',
+    service_name='J-P Summary',
     discovery_function=discovery_vsedge_summary,
     check_function=check_vsedge_summary,
     check_ruleset_name='vsedge',
