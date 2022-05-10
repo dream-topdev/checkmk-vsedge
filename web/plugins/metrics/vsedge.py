@@ -61,12 +61,25 @@ check_metrics["check_mk-vsedge_traffic"] = {
     },
 }
 
-perfometer_info.append({
-    "type": "logarithmic",
-    "metric": "vsedge_traffic_currentTx",
-    "half_value": 10,
-    "exponent": 2.0,
-})
+perfometer_info.append(
+    {
+        "type": "dual",
+        "perfometers": [
+            {
+                "type": "logarithmic",
+                "metric": "vsedge_traffic_currentTx",
+                "half_value": 5000,
+                "exponent": 2,
+            },
+            {
+                "type": "logarithmic",
+                "metric": "vsedge_traffic_currentRx",
+                "half_value": 5000,
+                "exponent": 2,
+            },
+        ],
+    }
+)
 
 # metrics for resource
 metric_info["vsedge_resource_cpuUsed"] = {
@@ -90,11 +103,23 @@ check_metrics["check_mk-vsedge_traffic"] = {
     }
 }
 
-perfometer_info.append({
-    "type": "linear",
-    "segments": ["vsedge_resource_cpuUsed"],
-    "total": 100.0,
-})
+perfometer_info.append(
+    {
+        "type": "dual",
+        "perfometers": [
+            {
+                "type": "linear",
+                "segments": ["vsedge_resource_cpuUsed"],
+                "total": 100.0,
+            },
+            {
+                "type": "linear",
+                "segments": ["vsedge_resource_memoryUsed"],
+                "total": 100.0,
+            },
+        ],
+    }
+)
 
 
 # metrics for wireless
