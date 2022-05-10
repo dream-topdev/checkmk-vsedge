@@ -20,6 +20,29 @@
 from cmk.gui.i18n import _
 
 from cmk.gui.plugins.metrics import metric_info, check_metrics, perfometer_info, MB
+# metrics for summary
+
+
+metric_info["vsedge_summary_deviceUptime"] = {
+    "title": _("Device Up Time"),
+    "unit": "s",
+    "color": "#00e060",
+}
+
+check_metrics["check_mk-vsedge_summary"] = {
+    "deviceUptime": {
+        "name": "vsedge_summary_deviceUptime",
+    },
+}
+
+perfometer_info.append(
+    {
+        "type": "logarithmic",
+        "metric": "vsedge_summary_deviceUptime",
+        "half_value": 2592000.0,
+        "exponent": 2,
+    }
+)
 
 # metrics for traffic
 metric_info["vsedge_traffic_currentTx"] = {

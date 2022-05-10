@@ -72,7 +72,14 @@ def discovery_vsedge_summary(section):
 
 
 def check_vsedge_summary(params, section):
-    summary = 'Device IP is %s. Product Name is %s. Device Up Time is %s. Serial No is %s. Firmware version is %s.' % (section['deviceIP'], section['productName'], render.timespan(section['deviceUptime']), section['serialNo'], section['firmwareVersion'])
+    yield from check_levels(
+        int(section['deviceUptime']),
+        levels_upper=params.get('deviceUptime', None),
+        label='Device Up Time',
+        metric_name='vsedge_summary_deviceUptime',
+        render_func=lambda v: render.timespan(v)
+    )
+    summary = 'Device IP is %s. Product Name is %s. Serial No is %s. Firmware version is %s.' % (section['deviceIP'], section['productName'], section['serialNo'], section['firmwareVersion'])
     yield Result(state=State.OK, summary=summary)
 
 
