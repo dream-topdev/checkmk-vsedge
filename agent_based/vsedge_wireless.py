@@ -49,7 +49,7 @@ def parse_vsedge_wireless(string_table):
         'wirelessMode': string_table[0][0],
         'wirelessFrequency': string_table[0][1],
         'wirelessWidth': string_table[0][2],
-        'wirelessSignal': string_table[0][3],
+        'wirelessSignal': string_table[0][3] if string_table[0][3] != '' else '0',
         'wirelessSsid': string_table[0][4]
     }
 
