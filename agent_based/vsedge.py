@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8; py-indent-offset: 4 -*-
 #
-# Checks based on the CF-PRIVATE-MIB for the Barracuda CloudGen Firewall.
+# Checks based on the Phion-MIB for the Barracuda CloudGen Firewall.
 #
 # Copyright (C) 2021  Marius Rieder <marius.rieder@scs.ch>
 #
@@ -19,11 +19,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-# Example device summary from SNMP data:
-# .1.3.6.1.4.1.65535.1.4.1.0 --> CF-PRIVATE::cpuUsed
-# .1.3.6.1.4.1.65535.1.4.2.0 --> CF-PRIVATE::memoryUsed
+# Example excerpt from SNMP data:
+# .1.3.6.1.4.1.65535.1.1.2.0 --> CF-PRIVATE::productName
 
-from cmk.gui.i18n import _
 from cmk.base.plugins.agent_based.agent_based_api.v1 import (
     register,
     SNMPTree,
@@ -37,54 +35,42 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
 )
 
 
-def parse_vsedge_resource(string_table):
+def parse_vsedge(string_table):
     return {
-        'cpuUsed': string_table[0][0],
-        'memoryUsed': string_table[0][1]
+        'productName': string_table[0][0],
     }
 
 register.snmp_section(
-    name='vsedge_resource',
+    name='vsedge',
     detect = startswith(".1.3.6.1.2.1.1.1.0", "Linux vsedge"),
     fetch=SNMPTree(
-        base='.1.3.6.1.4.1.65535.1.4',
+        base='.1.3.6.1.4.1.65535.1.1',
         oids=[
-            '1.0',  #cpuUsed
-            '2.0',  #memoryUsed
+            '2.0',  #productName
         ],
-    ),    
-    parse_function=parse_vsedge_resource,
+    ),
+    parse_function=parse_vsedge,
 )
 
 
-def discovery_vsedge_resource(section):
+def discovery_vsedge(section):
     if section:
         yield Service()
 
 
-def check_vsedge_resource(params, section): 
-    yield from check_levels(
-        int(section['cpuUsed']),
-        levels_upper=params.get('cpuUsed', None),
-        label='Current cpu usage',
-        metric_name='vsedge_resource_cpuUsed',
-        render_func=lambda v: render.percent(v)
-    )
-
-    yield from check_levels(
-        int(section['memoryUsed']),
-        levels_upper=params.get('memoryUsed', None),
-        label='Current memory usage',
-        metric_name='vsedge_resource_memoryUsed',
-        render_func=lambda v: render.percent(v)
-    )
+def check_vsedge(params, section):
+    if section['productName'] == "vsedge":
+        summary = 'Device Type is VSEdge.'
+    else:
+        summary = "Device Type is CF-IR."
+    yield Result(state=State.OK, summary=summary)
 
 
 register.check_plugin(
-    name='vsedge_resource',
-    service_name='Resource',
-    discovery_function=discovery_vsedge_resource,
-    check_function=check_vsedge_resource,
+    name='vsedge',
+    service_name='Device Type',
+    discovery_function=discovery_vsedge,
+    check_function=check_vsedge,
     check_ruleset_name='vsedge',
     check_default_parameters={},
 )

@@ -104,7 +104,7 @@ def check_vsedge_traffic(params, section):
 
 register.check_plugin(
     name='vsedge_traffic',
-    service_name='J-P Traffic',
+    service_name='Traffic',
     discovery_function=discovery_vsedge_traffic,
     check_function=check_vsedge_traffic,
     check_ruleset_name='vsedge',

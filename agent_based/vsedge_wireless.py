@@ -92,7 +92,7 @@ def check_vsedge_wireless(params, section):
 
 register.check_plugin(
     name='vsedge_wireless',
-    service_name='J-P Wireless',
+    service_name='Wireless',
     discovery_function=discovery_vsedge_wireless,
     check_function=check_vsedge_wireless,
     check_ruleset_name='vsedge',
