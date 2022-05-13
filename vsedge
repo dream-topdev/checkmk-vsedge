@@ -4,6 +4,7 @@
     'download_url': 'https://github.com/DevWithReact/checkmk-vsedge',
     'files': {
         'agent_based': [
+            'vsedge.py',
             'vsedge_resource.py',
             'vsedge_summary.py',
             'vsedge_traffic.py',
