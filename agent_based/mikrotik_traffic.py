@@ -20,10 +20,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # Example device summary from SNMP data:
-# .1.3.6.1.4.1.14988.1.1.1.3.1.2.1 --> mikrotik::mtxrWlApTxRate.1
-# .1.3.6.1.4.1.14988.1.1.1.3.1.3.1 --> mikrotik::mtxrWlApRxRate.1
-# .1.3.6.1.4.1.14988.1.1.14.1.1.61.3 --> mikrotik::mtxrinterfaceStatsTxBytes.3
-# .1.3.6.1.4.1.14988.1.1.14.1.1.31.3 --> mikrotik::mtxrinterfaceStatsRxBytes.3
+# .1.3.6.1.4.1.14988.1.1.1.2.1.8 --> mikrotik::mtxrWlRtabTxRate
+# .1.3.6.1.4.1.14988.1.1.1.2.1.9 --> mikrotik::mtxrWlRtabRxRate
+# .1.3.6.1.4.1.14988.1.1.1.2.1.4 --> mikrotik::mtxrWlRtabTxBytes 
+# .1.3.6.1.4.1.14988.1.1.1.2.1.5 --> mikrotik::mtxrWlRtabRxBytes 
 
 from cmk.gui.i18n import _
 from cmk.base.plugins.agent_based.agent_based_api.v1 import (
@@ -40,25 +40,46 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
 
 
 def parse_mikrotik_traffic(string_table):
+    if len(string_table) == 0 or len(string_table[0]) == 0:
+        return {
+            'currentTx': 'none'
+        }
     return {
-        'currentTx': string_table[0][0],
-        'currentRx': string_table[0][1],
-        'totalTx': string_table[0][2],
-        'totalRx': string_table[0][3]
+        'currentTx': string_table[0][0][0],
+        'currentRx': string_table[1][0][0],
+        'totalTx': string_table[2][0][0],
+        'totalRx': string_table[3][0][0]
     }
 
 register.snmp_section(
     name='mikrotik_traffic',
     detect = startswith(".1.3.6.1.2.1.1.1.0", "RouterOS"),
-    fetch=SNMPTree(
-        base='.1.3.6.1.4.1.14988.1.1',
-        oids=[
-            '1.3.1.2.1',  #currentTx
-            '1.3.1.3.1',  #currentRx
-            '14.1.1.61.3',  #totalTx
-            '14.1.1.31.3',  #totalRx
-        ],
-    ),    
+    fetch=[
+        SNMPTree(
+            base='.1.3.6.1.4.1.14988.1.1.1.2',
+            oids=[
+                '1.8',  #currentTx,
+            ],
+        ),
+        SNMPTree(
+            base='.1.3.6.1.4.1.14988.1.1.1.2',
+            oids=[
+                '1.9',  #currentRx,
+            ],
+        ),
+        SNMPTree(
+            base='.1.3.6.1.4.1.14988.1.1.1.2',
+            oids=[
+                '1.4',  #totalTxBytes,
+            ],
+        ),
+        SNMPTree(
+            base='.1.3.6.1.4.1.14988.1.1.1.2',
+            oids=[
+                '1.5',  #totalRxBytes,
+            ],
+        ),
+    ],
     parse_function=parse_mikrotik_traffic,
 )
 
@@ -68,7 +89,11 @@ def discovery_mikrotik_traffic(section):
         yield Service()
 
 
-def check_mikrotik_traffic(params, section): 
+def check_mikrotik_traffic(params, section):
+    if section.get('currentTx') == 'none':
+        yield Result(state=State.WARN, summary="No traffic monitor...")
+        return
+    
     yield from check_levels(
         int(section['currentTx']),
         levels_upper=params.get('currentTx', None),
