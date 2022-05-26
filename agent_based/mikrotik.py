@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # Example excerpt from SNMP data:
-# .1.3.6.1.4.1.65535.1.1.2.0 --> CF-PRIVATE::productName
+# .1.3.6.1.2.1.1.1.0 --> sysDescr
 
 from cmk.base.plugins.agent_based.agent_based_api.v1 import (
     register,
@@ -35,42 +35,39 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
 )
 
 
-def parse_vsedge(string_table):
+def parse_sysDescr(string_table):
     return {
         'productName': string_table[0][0],
     }
 
 register.snmp_section(
-    name='vsedge',
-    detect = startswith(".1.3.6.1.2.1.1.1.0", "Linux vsedge"),
+    name='mikrotik',
+    detect = startswith(".1.3.6.1.2.1.1.1.0", "RouterOS"),
     fetch=SNMPTree(
-        base='.1.3.6.1.4.1.65535.1.1',
+        base='.1.3.6.1.2.1.1',
         oids=[
-            '2.0',  #productName
+            '1.0',  #sysDescr
         ],
     ),
-    parse_function=parse_vsedge,
+    parse_function=parse_sysDescr,
 )
 
 
-def discovery_vsedge(section):
+def discovery_mikrotik(section):
     if section:
         yield Service()
 
 
-def check_vsedge(params, section):
-    if section['productName'] == "vsedge":
-        summary = 'Device Type is VSEdge.'
-    else:
-        summary = "Device Type is CF-IR."
+def check_mikrotik(params, section):
+    summary = 'Device Type is RouterOS.'    
     yield Result(state=State.OK, summary=summary)
 
 
 register.check_plugin(
-    name='vsedge',
+    name='mikrotik',
     service_name='Device Type',
-    discovery_function=discovery_vsedge,
-    check_function=check_vsedge,
-    check_ruleset_name='vsedge',
+    discovery_function=discovery_mikrotik,
+    check_function=check_mikrotik,
+    check_ruleset_name='mikrotik',
     check_default_parameters={},
 )

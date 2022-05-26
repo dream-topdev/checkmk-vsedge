@@ -20,10 +20,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # Example device summary from SNMP data:
-# .1.3.6.1.4.1.65535.1.3.1.0 --> CF-PRIVATE::currentTx
-# .1.3.6.1.4.1.65535.1.3.2.0 --> CF-PRIVATE::currentRx
-# .1.3.6.1.4.1.65535.1.3.3.0 --> CF-PRIVATE::totalTx
-# .1.3.6.1.4.1.65535.1.3.4.0 --> CF-PRIVATE::totalRx
+# .1.3.6.1.4.1.14988.1.1.1.3.1.2.1 --> mikrotik::mtxrWlApTxRate.1
+# .1.3.6.1.4.1.14988.1.1.1.3.1.3.1 --> mikrotik::mtxrWlApRxRate.1
+# .1.3.6.1.4.1.14988.1.1.14.1.1.61.3 --> mikrotik::mtxrinterfaceStatsTxBytes.3
+# .1.3.6.1.4.1.14988.1.1.14.1.1.31.3 --> mikrotik::mtxrinterfaceStatsRxBytes.3
 
 from cmk.gui.i18n import _
 from cmk.base.plugins.agent_based.agent_based_api.v1 import (
@@ -39,7 +39,7 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
 )
 
 
-def parse_vsedge_traffic(string_table):
+def parse_mikrotik_traffic(string_table):
     return {
         'currentTx': string_table[0][0],
         'currentRx': string_table[0][1],
@@ -48,32 +48,32 @@ def parse_vsedge_traffic(string_table):
     }
 
 register.snmp_section(
-    name='vsedge_traffic',
-    detect = startswith(".1.3.6.1.2.1.1.1.0", "Linux vsedge"),
+    name='mikrotik_traffic',
+    detect = startswith(".1.3.6.1.2.1.1.1.0", "RouterOS"),
     fetch=SNMPTree(
-        base='.1.3.6.1.4.1.65535.1.3',
+        base='.1.3.6.1.4.1.14988.1.1',
         oids=[
-            '1.0',  #currentTx
-            '2.0',  #currentRx
-            '3.0',  #totalTx
-            '4.0',  #totalRx
+            '1.3.1.2.1',  #currentTx
+            '1.3.1.3.1',  #currentRx
+            '14.1.1.61.3',  #totalTx
+            '14.1.1.31.3',  #totalRx
         ],
     ),    
-    parse_function=parse_vsedge_traffic,
+    parse_function=parse_mikrotik_traffic,
 )
 
 
-def discovery_vsedge_traffic(section):
+def discovery_mikrotik_traffic(section):
     if section:
         yield Service()
 
 
-def check_vsedge_traffic(params, section): 
+def check_mikrotik_traffic(params, section): 
     yield from check_levels(
         int(section['currentTx']),
         levels_upper=params.get('currentTx', None),
         label='Current TX rate',
-        metric_name='vsedge_traffic_currentTx',
+        metric_name='mikrotik_traffic_currentTx',
         render_func=lambda v: render.iobandwidth(v)
     )
 
@@ -81,7 +81,7 @@ def check_vsedge_traffic(params, section):
         int(section['currentRx']),
         levels_upper=params.get('currentRx', None),
         label='Current RX rate',
-        metric_name='vsedge_traffic_currentRx',
+        metric_name='mikrotik_traffic_currentRx',
         render_func=lambda v: render.iobandwidth(v)
     )
 
@@ -89,7 +89,7 @@ def check_vsedge_traffic(params, section):
         int(section['totalTx']),
         levels_upper=params.get('totalTx', None),
         label='Total transmited',
-        metric_name='vsedge_traffic_totalTx',
+        metric_name='mikrotik_traffic_totalTx',
         render_func=lambda v: render.bytes(v)
     )
 
@@ -97,16 +97,16 @@ def check_vsedge_traffic(params, section):
         int(section['totalRx']),
         levels_upper=params.get('totalRx', None),
         label='Total received',
-        metric_name='vsedge_traffic_totalRx',
+        metric_name='mikrotik_traffic_totalRx',
         render_func=lambda v: render.bytes(v)
     )
 
 
 register.check_plugin(
-    name='vsedge_traffic',
+    name='mikrotik_traffic',
     service_name='Traffic',
-    discovery_function=discovery_vsedge_traffic,
-    check_function=check_vsedge_traffic,
-    check_ruleset_name='vsedge',
+    discovery_function=discovery_mikrotik_traffic,
+    check_function=check_mikrotik_traffic,
+    check_ruleset_name='mikrotik',
     check_default_parameters={},
 )
