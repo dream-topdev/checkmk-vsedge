@@ -59,7 +59,7 @@ def discovery_mikrotik(section):
 
 
 def check_mikrotik(params, section):
-    summary = 'Device Type is RouterOS.'    
+    summary = 'Device Type is CableFree RadioOS.'    
     yield Result(state=State.OK, summary=summary)
 
 
