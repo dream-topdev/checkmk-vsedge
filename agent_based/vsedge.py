@@ -42,7 +42,7 @@ def parse_vsedge(string_table):
 
 register.snmp_section(
     name='vsedge',
-    detect = startswith(".1.3.6.1.2.1.1.1.0", "Linux vsedge"),
+    detect = startswith(".1.3.6.1.4.1.65535.1.1.2.0", "vsedge"),
     fetch=SNMPTree(
         base='.1.3.6.1.4.1.65535.1.1',
         oids=[

@@ -45,7 +45,7 @@ def parse_vsedge_resource(string_table):
 
 register.snmp_section(
     name='vsedge_resource',
-    detect = startswith(".1.3.6.1.2.1.1.1.0", "Linux vsedge"),
+    detect = startswith(".1.3.6.1.4.1.65535.1.1.2.0", "vsedge"),
     fetch=SNMPTree(
         base='.1.3.6.1.4.1.65535.1.4',
         oids=[
@@ -64,7 +64,7 @@ def discovery_vsedge_resource(section):
 
 def check_vsedge_resource(params, section): 
     yield from check_levels(
-        int(section['cpuUsed']),
+        int(section['cpuUsed']) if section['cpuUsed'].isdigit() else 0,
         levels_upper=params.get('cpuUsed', None),
         label='Current cpu usage',
         metric_name='vsedge_resource_cpuUsed',
@@ -72,7 +72,7 @@ def check_vsedge_resource(params, section):
     )
 
     yield from check_levels(
-        int(section['memoryUsed']),
+        int(section['memoryUsed']) if section['memoryUsed'].isdigit() else 0,
         levels_upper=params.get('memoryUsed', None),
         label='Current memory usage',
         metric_name='vsedge_resource_memoryUsed',
