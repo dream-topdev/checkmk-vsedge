@@ -38,6 +38,7 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
     State,
     render
 )
+from cmk.base.plugins.agent_based import vsedge_license_core
 
 
 def parse_vsedge_wireless(string_table):
@@ -45,10 +46,12 @@ def parse_vsedge_wireless(string_table):
         return {
             'wirelessMode': 'none'
         }
+    width = '20' if string_table[0][2] == '40-' else string_table[0][2]
+
     return {
         'wirelessMode': string_table[0][0],
         'wirelessFrequency': string_table[0][1],
-        'wirelessWidth': string_table[0][2],
+        'wirelessWidth': width,
         'wirelessSignal': string_table[0][3] if string_table[0][3] != '' else '0',
         'wirelessSsid': string_table[0][4]
     }
@@ -76,6 +79,10 @@ def discovery_vsedge_wireless(section):
 
 
 def check_vsedge_wireless(params, section):
+    licenseResult = vsedge_license_core.doCheckinglicense()
+    if (licenseResult['status'] != "OK"):
+        yield Result(state=State.CRIT, summary=licenseResult['msg'])
+        return
     if section.get('wirelessMode') == 'none':
         yield Result(state=State.WARN, summary="Wireless link is not connected currently...")
     else:        

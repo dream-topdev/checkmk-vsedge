@@ -37,6 +37,7 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
     State,
     render
 )
+from cmk.base.plugins.agent_based import vsedge_license_core
 
 
 def parse_vsedge_traffic(string_table):
@@ -69,6 +70,10 @@ def discovery_vsedge_traffic(section):
 
 
 def check_vsedge_traffic(params, section): 
+    licenseResult = vsedge_license_core.doCheckinglicense()
+    if (licenseResult['status'] != "OK"):
+        yield Result(state=State.CRIT, summary=licenseResult['msg'])
+        return
     yield from check_levels(
         int(section['currentTx']),
         levels_upper=params.get('currentTx', None),

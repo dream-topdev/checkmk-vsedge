@@ -38,6 +38,7 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
     State,
     render
 )
+from cmk.base.plugins.agent_based import vsedge_license_core
 
 
 def parse_vsedge_summary(string_table):
@@ -72,6 +73,10 @@ def discovery_vsedge_summary(section):
 
 
 def check_vsedge_summary(params, section):
+    licenseResult = vsedge_license_core.doCheckinglicense()
+    if (licenseResult['status'] != "OK"):
+        yield Result(state=State.CRIT, summary=licenseResult['msg'])
+        return
     yield from check_levels(
         int(section['deviceUptime']),
         levels_upper=params.get('deviceUptime', None),

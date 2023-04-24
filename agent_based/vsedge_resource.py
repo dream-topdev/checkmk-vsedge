@@ -35,6 +35,7 @@ from cmk.base.plugins.agent_based.agent_based_api.v1 import (
     State,
     render
 )
+from cmk.base.plugins.agent_based import vsedge_license_core
 
 
 def parse_vsedge_resource(string_table):
@@ -62,7 +63,11 @@ def discovery_vsedge_resource(section):
         yield Service()
 
 
-def check_vsedge_resource(params, section): 
+def check_vsedge_resource(params, section):    
+    licenseResult = vsedge_license_core.doCheckinglicense()
+    if (licenseResult['status'] != "OK"):
+        yield Result(state=State.CRIT, summary=licenseResult['msg'])
+        return
     yield from check_levels(
         int(section['cpuUsed']) if section['cpuUsed'].isdigit() else 0,
         levels_upper=params.get('cpuUsed', None),
